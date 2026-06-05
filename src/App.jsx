@@ -22,7 +22,7 @@ function App() {
           <p className="text-gray-600 text-x ">VISTA HOMES</p>
         </div>
 
-          <div className="absolute left-16 top-30 w-[340px] bg-white/90 rounded-[30px] shadow-xl p-8">
+          <div className="absolute left-16 top-30 w-[340px] bg-white/50 rounded-[30px] shadow-xl p-8">
             <h2 className="text-2xl font-bold text-gray-800 text-center ">
               Agent Login
             </h2>
