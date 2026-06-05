@@ -2,7 +2,7 @@ import building from './assets/building.jpg';
 
 function App() {
   return(
-    <div className="bg-slate-300 items-center justify-center min-h-screen flex p--6">
+    <div className="bg-slate-300 items-center justify-center min-h-screen flex p-6">
 
       <div className="rounded-3xl shadow-2xl w-full max-w-8xl h-[650px]  relative overflow-hidden shadow-2xl  ">
         <img 
