@@ -1,8 +1,72 @@
-import { Link } from 'react-router-dom';
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 function ResetPassword() {
+
+    const navigate = useNavigate();
+
+    const [formData, setFormData] = useState({
+        newPassword: "",
+        confirmPassword: "",
+    });
+    
+
+    const[errors, setErrors] = useState({});
+
+    const handleChange = (e) => {
+        setFormData({
+          ...formData,
+          [e.target.name]: e.target.value
+        });
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        const newErrors = {};
+
+        if (!formData.newPassword) {
+            newErrors.newPassword = "New password is required";
+        } else if (formData.newPassword.length < 6) {
+             newErrors.newPassword = "Password must be at least 6 characters" ;
+        }
+
+        if (!formData.confirmPassword) {
+            newErrors.confirmPassword = "Confirm password is required";
+        } else if (formData.newPassword !== formData.confirmPassword) {
+            newErrors.confirmPassword = "Passwords do not match";
+        }
+
+        setErrors(newErrors);
+
+        if (Object.keys(newErrors).length === 0) {
+            const savedUser = JSON.parse(localStorage.getItem("user"));
+            const resetEmail = localStorage.getItem("resetEmail");
+
+            if (!savedUser || savedUser.email !== resetEmail) {
+               alert("Something went wrong. Please try again");
+            navigate("/forgot-password");
+            return;
+            }
+
+            const updateUser = {
+                ...savedUser,
+                password: formData.newPassword,
+                confirmPassword: formData.newPassword,
+            };
+
+            localStorage.setItem("user", JSON.stringify(updateUser));
+            localStorage.removeItem("otp");
+            localStorage.removeItem("resetEmail");
+
+            alert("Password reset successfully");
+            navigate("/login");
+        
+        } 
+    };
     return(
         <div className="min-h-screen bg-gray-100 justify-center items-center flex py-10">
-            <form className="w-[380px] bg-white p-8 rounded-xl shadow-md">
+            <form onSubmit={handleSubmit}
+                  className="w-[380px] bg-white p-8 rounded-xl shadow-md">
 
                 <h2 className="text-center font-bold text-xl text-gray-600 mb-2">
                     Reset Password
@@ -17,11 +81,13 @@ function ResetPassword() {
                            New Password
                       </label>
                       <input
+                         value={formData.newPassword}
+                         onChange={handleChange}
                          name="newPassword"
                          type="password"
                          placeholder="Enter new password"
                          className="w-full border border-gray-300 outline-none focus:ring rounded-md px-4 py-3 mt-2"
-                        />
+                        /> {errors.newPassword && (<p className="text-red-500 text-sm mt-1">{errors.newPassword}</p>)}
                  </div>
 
                 <div className="mb-4">
@@ -29,10 +95,13 @@ function ResetPassword() {
                         Confirm Password
                     </label>
                     <input
+                      value={formData.confirmPassword}
+                      onChange={handleChange}
                       name="confirmPassword"
                       type="password"
                       placeholder="Confirm new password"
                       className="w-full border border-gray-300 outline-none focus:ring rounded-md px-4 py-3 mt-2" />
+                      {errors.confirmPassword && (<p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>)}
 
                 </div>
 

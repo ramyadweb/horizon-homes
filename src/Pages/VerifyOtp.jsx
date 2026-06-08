@@ -1,8 +1,32 @@
-import { Link } from 'react-router-dom';
+import { useState } from 'react';
+import { Link, useNavigate} from 'react-router-dom';
 function VerifyOtp() {
+    const navigate = useNavigate();
+
+    const[otp, setOtp] = useState("");
+    const[error, setError] = useState("");
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        if (!otp.trim()) {
+            setError("OTP is required");
+            return;
+        }
+
+        const savedOtp = localStorage.getItem("otp");
+
+        if (otp !== savedOtp) {
+            setError("Invalid OTP")
+            return;
+        }
+
+        alert("OTP verified successfully");
+        navigate("/reset-password");
+    };
     return(
         <div className="w-full bg-gray-100  justify-center items-center flex min-h-screen">
-            <form className="w-[380px] bg-white p-8 rounded-xl shadow-md">
+            <form onSubmit={handleSubmit} className="w-[380px] bg-white p-8 rounded-xl shadow-md">
             <h2 className="text-center font-bold text-gray-600 text-2xl mb-2">
                 OTP Verification
             </h2>
@@ -14,11 +38,14 @@ function VerifyOtp() {
             <div className="mb-4">
                 <label className="font-bold text-sm text-gray-400">OTP</label>
                 <input 
+                   value={otp}
                    name="otp"
+                   onChange={(e) => setOtp(e.target.value)}
                    type="text"
                    maxLength="6"
                    placeholder="Enter OTP"
                    className="w-full border border-gray-300 outline-none focus:ring rounded-md px-4 py-3 mt-2" />
+                   {error && (<p className="text-sm text-red-500 mt-1">{error}</p>)}
 
 
             </div>

@@ -1,8 +1,46 @@
-import { Link } from 'react-router-dom';
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 function ForgotPassword() {
+
+    const navigate = useNavigate();
+
+    const[email, setEmail] = useState("");
+    const[error, setError] = useState("");
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        if (!email.trim()) {
+            setError("Email is required");
+            return;
+        }
+
+        if (!email.includes("@") || !email.includes(".")) {
+            setError("Enter a valid email")
+            return;
+        }
+
+        const savedUser = JSON.parse(localStorage.getItem("user"))
+
+        if (!savedUser || savedUser.email !== email) {
+            setError("This email is not registered")
+            return;
+        }
+
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+        localStorage.setItem("otp", otp)
+        localStorage.setItem("resetEmail", email);
+
+        alert(`Your OTP is: ${otp}`);
+        console.log("OTP:", otp);
+
+        navigate("/verify-otp");
+    };
+
     return(
         <div className="min-h-screen bg-gray-100 py-10 items-center justify-center flex">
-            <form className="w-[380px] bg-white p-8 rounded-3xl shadow-md ">
+            <form onSubmit={handleSubmit} className="w-[380px] bg-white p-8 rounded-3xl shadow-md ">
             <h2 className="font-bold text-center text-2xl mb-2  text-gray-700 ">
                 Forgot Password 
 
@@ -15,10 +53,13 @@ function ForgotPassword() {
                 <div className="mb-4">
                     <label className="text-sm text-gray-400 font-bold">Email </label>
                 <input 
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   name="email"
                   type="email"
                   placeholder="Enter your email"
                   className="w-full border border-gray-300 outline-none focus:ring rounded-md px-4 py-3" />
+                  {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
             </div>
 
             <div className="mb-4">
@@ -42,4 +83,4 @@ function ForgotPassword() {
     );
 }
 
-export default ForgotPassword;  
+export default ForgotPassword;   
