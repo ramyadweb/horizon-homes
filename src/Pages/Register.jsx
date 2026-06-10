@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { hashPassword } from '../utils/hashPassword';
 function Register() {
 
     const navigate = useNavigate();
@@ -21,7 +22,7 @@ function Register() {
         });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
         const newErrors = {};
@@ -51,7 +52,16 @@ function Register() {
         setErrors(newErrors);
 
         if (Object.keys(newErrors).length === 0) {
-            localStorage.setItem("user", JSON.stringify(formData));
+
+            const hashPassword = await hashPassword(formData.password);
+
+            const userData = {
+                name: formData.name,
+                email: formData.email,
+                password: hashedPassword,
+            };
+            localStorage.setItem("user", JSON.stringify(userData));
+          
             alert("Account created successfully");
             navigate("/login");
 

@@ -1,3 +1,4 @@
+import { hashPassword } from '../utils/hashPassword';
 import building from '../assets/building.jpg';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
@@ -20,7 +21,7 @@ function Login() {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const newErrors = {};
@@ -44,12 +45,14 @@ function Login() {
         return;
       }
 
+      const hashedLoginPassword = await hashPassword(formData.password);
+
       if (
         savedUser.email === formData.email &&
         savedUser.password === formData.password
       ) {
         alert("Login successful");
-        navigate("/dashboard  ");
+        navigate("/dashboard");
       } else {
         setErrors({
           login: "Invalid email or password",

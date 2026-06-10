@@ -1,3 +1,4 @@
+import { hashPassword } from '../utils/hashPassword';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 function ResetPassword() {
@@ -19,7 +20,7 @@ function ResetPassword() {
         });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
         const newErrors = {};
@@ -48,10 +49,12 @@ function ResetPassword() {
             return;
             }
 
+            const hashedNewPassword = await hashPassword(formData.newPassword);
+
             const updateUser = {
                 ...savedUser,
-                password: formData.newPassword,
-                confirmPassword: formData.newPassword,
+                password: hashedNewPassword,
+                
             };
 
             localStorage.setItem("user", JSON.stringify(updateUser));
